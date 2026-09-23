@@ -1,15 +1,8 @@
-# ===============================
-#   BANKING MANAGEMENT SYSTEM
-#   (Streamlit + MySQL version)
-# ===============================
-#
-# All database work lives in db.py. This file is only the UI:
+            #BANKING MANAGEMENT SYSTEM
+
+# All database work in db.py, This file is only UI:
 # screens, forms, buttons, and which db.py function to call.
-#
-# Before running this, make sure:
-#   1. schema.sql has been run against your MySQL server
-#   2. .streamlit/secrets.toml has your real MySQL credentials
-#      (copy secrets.toml.example and fill it in)
+
 
 import streamlit as st
 import pandas as pd
@@ -30,10 +23,10 @@ div[data-testid="InputInstructions"]{
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------------------------------------
-# SESSION STATE
-# (only UI state now — the data itself lives in MySQL)
-# -------------------------------------------------
+
+#SESSION STATE
+#(only UI state now — the data itself lives in MySQL)
+
 if "logged_in_acc" not in st.session_state:
     st.session_state.logged_in_acc = None
 
@@ -41,9 +34,9 @@ if "is_admin" not in st.session_state:
     st.session_state.is_admin = False
 
 
-# -------------------------------------------------
-# SCREEN: not logged in  ->  Customer Login / Create Account / Admin Login
-# -------------------------------------------------
+
+# SCREEN: not logged in,  then:  Customer Login / Create Account / Admin Login
+
 def show_auth_screen():
     st.title("Banking Management System")
 
@@ -111,9 +104,9 @@ def show_auth_screen():
                 st.error("Invalid Admin Credentials")
 
 
-# -------------------------------------------------
+
 # SCREEN: logged in as customer
-# -------------------------------------------------
+
 def show_customer_dashboard():
     acc = st.session_state.logged_in_acc
     info = db.get_account(acc)
@@ -214,7 +207,7 @@ def show_customer_dashboard():
 
             submitted = st.form_submit_button("Deposit")
 
-        # Step 1: User submits amount
+        #Step1- User submits amount
         if submitted:
 
             if not amount.isdigit():
@@ -224,7 +217,7 @@ def show_customer_dashboard():
                 st.session_state.deposit_amount = int(amount)
                 st.session_state.confirm_deposit = True
 
-        # Step 2: Confirmation (outside the form)
+        # Step2- Confirmation (outside the form)
         if st.session_state.confirm_deposit:
 
             st.warning(
@@ -242,10 +235,10 @@ def show_customer_dashboard():
 
                 if ok:
 
-                    # Hide confirmation
+                    # hide confirmation
                     st.session_state.confirm_deposit = False
 
-                    # Remove saved amount
+                    # remove saved amount
                     st.session_state.pop("deposit_amount", None)
 
                     st.success(msg)
@@ -279,7 +272,7 @@ def show_customer_dashboard():
 
             submitted = st.form_submit_button("Withdraw")
 
-        # Step 1: User submits amount
+        #Step1- User submits amount
         if submitted:
 
             if not amount.isdigit():
@@ -289,7 +282,7 @@ def show_customer_dashboard():
                 st.session_state.withdraw_amount = int(amount)
                 st.session_state.confirm_withdraw = True
 
-        # Step 2: Confirmation
+        #Step2- Confirmation
         if st.session_state.confirm_withdraw:
 
             st.warning(
@@ -352,7 +345,7 @@ def show_customer_dashboard():
 
             submitted = st.form_submit_button("Transfer")
 
-        # User clicks Transfer
+        #when user clicks Transfer
         if submitted:
 
             if not receiver.strip().isdigit():
@@ -363,7 +356,7 @@ def show_customer_dashboard():
 
             else:
 
-                # Fetch receiver details
+                #fetching receiver details
                 receiver_info = db.get_account(int(receiver))
 
                 if receiver_info is None:
@@ -383,7 +376,7 @@ def show_customer_dashboard():
 
 
 
-        # Confirmation Screen
+        # confirmation screen
         if st.session_state.confirm_transfer:
 
             with st.container(border=True):
@@ -407,7 +400,6 @@ def show_customer_dashboard():
 
                     if ok:
 
-                        # Hide confirmation immediately
                         st.session_state.confirm_transfer = False
 
                         # Clear stored transfer details
@@ -415,7 +407,6 @@ def show_customer_dashboard():
                         del st.session_state.transfer_amount
                         del st.session_state.receiver_name
 
-                        # Show success message
                         st.success(msg)
 
                         time.sleep(3)
@@ -578,7 +569,9 @@ def show_customer_dashboard():
         st.write(f"**Age:** {info['age']}")
         st.write(f"**Mobile:** {info['mobile']}")
         st.write(f"**Account Type:** {info['account_type']}")
+
         #st.write(f"**CIBIL Score:** {info['cibil_score']}")
+
         score = info["cibil_score"]
 
         if score >= 800:
@@ -620,7 +613,7 @@ def show_customer_dashboard():
 
                 if ok:
                     st.success(msg)
-                    time.sleep(4)      # Wait for 2 seconds
+                    time.sleep(4)      #wait for 2 seconds
                     st.rerun()
                 else:
                     st.error(msg)
@@ -632,9 +625,8 @@ def show_customer_dashboard():
         st.rerun()
 
 
-# -------------------------------------------------
-# SCREEN: logged in as admin
-# -------------------------------------------------
+#logged in as admin
+
 def show_admin_dashboard():
     st.sidebar.title("Admin Menu")
     menu = st.sidebar.radio(
@@ -643,7 +635,7 @@ def show_admin_dashboard():
         label_visibility="collapsed",
     )
 
-    st.title("🛠️ Admin Dashboard")
+    st.title("Admin Dashboard")
 
     if menu == "Bank Summary":
         summary = db.get_bank_summary()
@@ -710,9 +702,9 @@ def show_admin_dashboard():
         st.rerun()
 
 
-# -------------------------------------------------
-# MAIN
-# -------------------------------------------------
+
+#Main
+
 if st.session_state.is_admin:
     show_admin_dashboard()
 elif st.session_state.logged_in_acc is not None:

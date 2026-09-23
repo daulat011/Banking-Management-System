@@ -1,11 +1,5 @@
-# =====================================================
-#  db.py — All database logic for the Banking Management System
-# =====================================================
-# Keeping this separate from app.py means:
-#   - app.py only worries about the UI (screens, forms, buttons)
-#   - db.py only worries about MySQL (queries, connections)
-# If your teammates already wrote SQL logic, this is the file to
-# compare / merge with theirs.
+        #db.py-- All database logic for the Banking Management System
+
 
 import hashlib
 import random
@@ -34,9 +28,8 @@ LOAN_RATES = {
 }      # % per year, flat rate for simplicity
 
 
-# -----------------------------------------------------
-# CONNECTION
-# -----------------------------------------------------
+#CONNECTION
+
 def get_connection():
     """
     Reads credentials from .streamlit/secrets.toml, so you never
@@ -57,9 +50,8 @@ def hash_password(password: str) -> str:
     return hashlib.sha256(password.encode()).hexdigest()
 
 
-# -----------------------------------------------------
-# ACCOUNT CREATION / LOGIN
-# -----------------------------------------------------
+#ACCOUNT CREATION or LOGIN
+
 def create_account(name, age, mobile, password, account_type):
     conn = get_connection()
     cur = conn.cursor()
@@ -125,7 +117,7 @@ def verify_login(acc_no, password):
         _register_failed_attempt(acc_no, account["failed_attempts"])
         return "wrong_password"
 
-    # Successful login clears any previous failed attempts
+    #Successful login clears any previous failed attempts
     _reset_failed_attempts(acc_no)
     return "success"
 
@@ -192,7 +184,7 @@ def change_password(acc_no, old_password, new_password):
 
     conn.commit()
 
-    # Verify immediately after update
+
     cur.execute(
         "SELECT password_hash FROM accounts WHERE acc_no = %s",
         (acc_no,)
@@ -208,9 +200,9 @@ def change_password(acc_no, old_password, new_password):
     return True, "Password Changed Successfully."
 
 
-# -----------------------------------------------------
-# TRANSACTIONS
-# -----------------------------------------------------
+
+#TRANSACTIONS
+
 def _log_transaction(cur, acc_no, txn_type, amount, balance_after):
     cur.execute(
         """INSERT INTO transactions (acc_no, txn_type, amount, balance_after)
@@ -298,9 +290,8 @@ def get_transactions(acc_no):
     return rows
 
 
-# -----------------------------------------------------
-# LOANS
-# -----------------------------------------------------
+#LOANS
+
 def calculate_emi(principal, annual_rate, tenure_months):
 
     total_interest = principal * (annual_rate / 100) * (tenure_months / 12)

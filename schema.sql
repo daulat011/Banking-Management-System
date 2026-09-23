@@ -1,9 +1,8 @@
--- =====================================================
---  BANKING MANAGEMENT SYSTEM — MySQL SCHEMA
--- =====================================================
--- Run this once against your MySQL server before starting the app:
+            -- BANKING MANAGEMENT SYSTEM — MySQL SCHEMA
+
+-- Run this once against your MySQL server before starting the app:-
 --   mysql -u your_user -p your_database < schema.sql
---
+
 -- If you already created the database yourself, you can drop the
 -- CREATE DATABASE / USE lines and just run the CREATE TABLE statements
 -- inside your existing database.
@@ -27,9 +26,9 @@ CREATE TABLE IF NOT EXISTS accounts (
     created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
--- ---------------------------------------------------
+
 -- TRANSACTIONS  (deposits / withdrawals / transfers)
--- ---------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS transactions (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     acc_no        INT NOT NULL,
@@ -40,9 +39,9 @@ CREATE TABLE IF NOT EXISTS transactions (
     FOREIGN KEY (acc_no) REFERENCES accounts(acc_no) ON DELETE CASCADE
 );
 
--- ---------------------------------------------------
+
 -- LOANS
--- ---------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS loans (
     id             INT AUTO_INCREMENT PRIMARY KEY,
     acc_no         INT NOT NULL,
@@ -55,9 +54,9 @@ CREATE TABLE IF NOT EXISTS loans (
     FOREIGN KEY (acc_no) REFERENCES accounts(acc_no) ON DELETE CASCADE
 );
 
--- ---------------------------------------------------
+
 -- FIXED DEPOSITS
--- ---------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS fixed_deposits (
     id               INT AUTO_INCREMENT PRIMARY KEY,
     acc_no           INT NOT NULL,
@@ -70,16 +69,16 @@ CREATE TABLE IF NOT EXISTS fixed_deposits (
     FOREIGN KEY (acc_no) REFERENCES accounts(acc_no) ON DELETE CASCADE
 );
 
--- ---------------------------------------------------
+
 -- ADMIN LOGIN
--- ---------------------------------------------------
+
 CREATE TABLE IF NOT EXISTS admins (
     id            INT AUTO_INCREMENT PRIMARY KEY,
     username      VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(64) NOT NULL
 );
 
--- Default admin login: username = admin, password = admin123
+-- default admin login:--  username = admin, password = admin123
 -- (CHANGE THIS before deploying anywhere public)
 INSERT INTO admins (username, password_hash)
 SELECT 'admin', SHA2('admin123', 256)
